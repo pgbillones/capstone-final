@@ -1,0 +1,114 @@
+<div id="cardContainer" class="w-100 d-flex flex-wrap justify-content-center">
+
+</div>  
+
+<div id="card" class="m-2 cursor-pointer" hidden onclick="onCardSelection(this)">
+    <div class="product-category-card mx-auto">
+        <img id="cardImage" class="w-100 h-100" >
+        <div id="cardImageOverlay" class="image-overlay">
+        </div>
+    </div>
+    <div id="cardLabel" class="text-center product-name font-weight-bold"></div>
+</div>
+
+<!-- active card class::::  product-category-card-active -->
+<!-- active product name::::: product-name-active -->
+
+<script>
+
+    const cardContainerEl = document.getElementById('cardContainer');
+    const dataVariableName = cardContainerEl.parentElement.getAttribute('data');
+    const isMultipleSelect = eval( cardContainerEl.parentElement.getAttribute('is-multiple-select') );
+    console.log('Variable name:', dataVariableName);
+    const cardsData = eval(dataVariableName);
+    let selectedCardsArr = [];
+
+    // if we are in multiselect mode, we need to display 5 cols per row, so we are removing d-flex and flex-wrap
+    if ( isMultipleSelect ) {
+        cardContainerEl.classList.remove('d-flex');
+        cardContainerEl.classList.remove('flex-wrap');
+        cardContainerEl.classList.remove('w-100');
+        cardContainerEl.classList.add('row');
+    }
+
+    for(let i=0; i<cardsData.length; i++){
+        const cardData = cardsData[i];
+        const cardEl = document.querySelector('#card').cloneNode(true);
+        cardEl.setAttribute('id', 'card'+i );
+        cardEl.querySelector('#cardImage').src = cardData.image;
+        cardEl.querySelector('#cardImageOverlay').setAttribute('hidden','');
+        cardEl.removeAttribute('hidden');
+        cardEl.querySelector('#cardLabel').innerHTML = cardData.name;
+        
+        // if we are in multiselect mode, we need to add col-* class to make this show 5 columns above 750px and 2 columns if lesser resolution. 
+        if ( isMultipleSelect ) {
+            cardEl.classList.add('col-4');
+            cardEl.classList.add('col-md-2');
+        }
+
+        cardContainerEl.appendChild(cardEl);
+    }
+
+    function onCardSelection(el) {
+        if ( isMultipleSelect ) {
+            selectMultipleCard(el);
+        } else {
+            selectCard(el);
+        }
+    }
+
+    function selectCard(el) {
+        // to remove the previously selected cards
+        removeAllSelection();
+
+        // enable cardImageOverlay (a blue color mask on top of the )
+        el.querySelector('#cardImageOverlay').removeAttribute('hidden');
+        el.querySelector('#cardLabel').classList.add('product-name-active');
+        
+        // Below is to send the selected object to parent html file 
+        let slCrds  = eval(cardContainerEl.parentElement.getAttribute('on-card-selection'));
+        const currentId = parseInt( el.getAttribute('id').replace('card', '') ) + 1;
+        const currentObject = cardsData.filter(item => item.id === currentId)[0];
+        slCrds( currentObject );
+    }
+
+    function selectMultipleCard(el) {
+        // below is to flip the card state. if selected, we need unselect it. if not selected, we need to select it. 
+        let isHidden = el.querySelector('#cardImageOverlay').hasAttribute('hidden');
+        if (isHidden && selectedCardsArr.length < 3 ) {
+            el.querySelector('#cardImageOverlay').removeAttribute('hidden');
+            el.querySelector('#cardLabel').classList.add('product-name-active');
+        } else {
+            el.querySelector('#cardImageOverlay').setAttribute('hidden', '');
+            el.querySelector('#cardLabel').classList.remove('product-name-active');
+        }
+
+        // setting empty array on selectedCardsArr to reset it
+        selectedCardsArr = [];
+
+        // now going through one by one card and pushing it to selectedCardsArr if it is selected. 
+        cardsData.forEach( (item, index) => {
+            
+            if ( document.getElementById('card'+ index ).querySelector('#cardImageOverlay').hasAttribute('hidden') ) {
+                // if it is hidden (meaning overlay hidden - card not selected), we are ignoring this item. 
+            } else {
+                selectedCardsArr.push(item);
+            }
+        });
+
+        // to send the data out to parent html page. 
+        let slCrds  = eval(cardContainerEl.parentElement.getAttribute('on-card-selection'));
+        slCrds( selectedCardsArr );
+
+    }
+
+    function removeAllSelection() {
+        for(let i=0; i<cardsData.length; i++){
+            const cardData = cardsData[i];
+            const cardEl = document.querySelector('#card'+i);
+            cardEl.querySelector('#cardImageOverlay').setAttribute('hidden', '');
+            cardEl.querySelector('#cardLabel').classList.remove('product-name-active');
+        }
+    }
+    
+</script>

@@ -1,0 +1,22 @@
+<div class="d-flex" id="stepperDots">
+    <!-- <div id="stepperDot"></div>
+    <div class="mx-2 step-circle step-circle-active" ></div>
+    <div class="mx-2 step-circle"></div>
+    <div class="mx-2 step-circle"></div>
+    <div class="mx-2 step-circle"></div>
+    <div class="mx-2 step-circle"></div> -->
+</div>
+
+<script>
+    const stepper = document.getElementById('stepperDots');
+    const stepperParent = stepper.parentElement;
+    let currentStep = parseInt(stepperParent.getAttribute("current-step"));
+    let totalSteps = parseInt(stepperParent.getAttribute("total-steps"));
+    for(let i=0; i<totalSteps; i++) {
+        const element = document.createElement('div');
+        element.classList.add('mx-2');
+        element.classList.add('step-circle');
+        if ( i+1 == currentStep ) { element.classList.add('step-circle-active'); }
+        stepper.appendChild(element);
+    }
+</script>

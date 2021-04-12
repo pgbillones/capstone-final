@@ -1,0 +1,110 @@
+
+<div class="w-100 d-flex border-bottom px-3 py-2 align-items-center">
+    <a class="button-link" href="/"><div class="logo-text cursor-pointer" >SamplRoo</div></a>
+    <div class="header-right-text ms-auto  me-3 cursor-pointer" onclick="openLoginPopup(this)" >Login</div>
+    <a class="button-link" href="/"><div class="header-right-text font-weight-bold cursor-pointer" >Get Started</div></a>
+</div>
+
+<div id="login-popup" class="model-container" hidden onclick="hidePopup(this)">
+    <div class="container h-100">
+        <div class="row h-100 mx-auto">
+            <div class="col-12 col-md-5 h-100 mx-auto">
+                <div class="py-5 w-100 h-100">
+                    <div class="w-100 h-100 model-content d-flex flex-column" id="model-content" >
+                        <div class="w-100 h-100 p-3 flex-grow-1 d-flex flex-column overflow-auto">
+                            <h3 class="text-center pb-4">Login</h3>
+                            <form>
+                                <div class="form-group mb-3">
+                                  <input type="email" class="form-control" id="loginEmail" placeholder="Email Address">
+                                </div>
+                                <div class="form-group mb-3">
+                                    <input type="password" class="form-control" id="loginPassword" placeholder="Password">
+                                </div>
+                            </form>
+                            <div class="mb-3 text-end cursor-pointer" onclick="openResetPage()" >
+                                Forget Password?
+                            </div>
+                            <div hidden id="loginSuccessMessage" class="py-2 text-success text-center" ></div>
+                            <div hidden id="loginFailureMessage" class="py-2 text-danger text-center" ></div>
+                            
+                            <button type="button" class="btn btn-dark mb-3 w-100" onclick="login()" >Login</button>
+                            <button type="button" class="btn btn-primary mb-3 w-100 background-blue-color" onclick="googleLogin()">Continue with Google</button>
+                            <!-- <button type="button" class="btn btn-primary mb-5 w-100 background-blue-color">Continue with Facebook</button>
+                             -->
+                        </div>
+                        <div class="p-4 background-blue-color d-flex flex-column">
+                            <div class="mb-2 text-center">Not part of the roo? Sign up Now!</div>
+                            <button type="button" class="btn btn-light">GET STARTED</button>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    document.getElementById('model-content').addEventListener( 'click', e => {
+        e.stopPropagation();
+    });
+
+    function openLoginPopup() {
+        document.getElementById('login-popup').removeAttribute('hidden');
+    }
+
+    function hidePopup(el) {
+        el.setAttribute('hidden', '');
+    }
+
+    function openResetPage() {
+        window.location.href = '/pages/forgetPassword.html';
+    }
+
+    function login() {
+        const loginEmail = document.getElementById('loginEmail');
+        const loginPassword = document.getElementById('loginPassword');
+        const loginSuccessMessage = document.getElementById('loginSuccessMessage');
+        const loginFailureMessage = document.getElementById('loginFailureMessage');
+        loginSuccessMessage.innerHTML = '';
+        loginFailureMessage.innerHTML = '';
+        loginSuccessMessage.hidden = true;
+        loginFailureMessage.hidden = true;
+        fetch('/login', {
+            method: 'POST',
+            headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({email: loginEmail.value, password: loginPassword.value})
+        }).then(response => response.json()).then( res => {
+            if(res.length > 0) {
+                if ( res[0] == 'true' ) {
+                    loginSuccessMessage.hidden = false;
+                    loginSuccessMessage.classList.remove('text-warning');
+                    loginSuccessMessage.classList.add('text-success');
+                    loginSuccessMessage.innerHTML = 'Login Successsful. '
+                    setTimeout(() => {
+                        window.location.href = '/';
+                    }, 2000);
+                } else {
+                    loginSuccessMessage.hidden = false;
+                    loginSuccessMessage.classList.remove('text-success');
+                    loginSuccessMessage.classList.add('text-warning');
+                    loginSuccessMessage.innerHTML = 'Email not yet verified.'
+                }
+                
+
+            } else {
+                loginFailureMessage.hidden = false;
+                loginFailureMessage.innerHTML = 'email / password is incorrect';
+            }
+        });
+    }
+
+    function googleLogin() {
+        window.location.href = '/auth/google';
+    }
+
+</script>

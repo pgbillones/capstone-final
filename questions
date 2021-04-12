@@ -1,0 +1,223 @@
+===========================================
+Client Id:
+46589627879-s3h484oiip5iu6ovb8d1lrqttb1oc3n0.apps.googleusercontent.com
+
+Client Secret:
+nIQmH6kjcKkdk9mcRzoFnJiz
+
+===========================================
+
+
+gmail- samplroo2021@gmail.com
+2021@samplroo
+
+facebook:  samplroo2021@gmail.com
+2021@samplroo2021
+SamplRoo2021@476621
+Sample!@*%^#6*^%$*%
+
+=================================
+Table Structure/Schema (table columns):
+    1. products ( table ) - will have 6 rows. (auto populate the rows using a script)
+        id (column)
+        name (column)
+        image (column)
+    2. subCategory ( table ) - will have 36 rows. (auto populate the rows using a script)
+        id (column)
+        productId (column)
+        name (column)
+        image (column)
+    3. brands ( table ) - will have 720 rows. (auto populate the rows using a script / will be dependend on princee data  )
+        id (column)
+        subCategoryId (column)
+        name (column)
+        image (column)
+    4. users ( table ) - will have 0 rows initally, as the user register themself, this table will be filled with user data. 
+        id (column)
+        email 
+        password
+        age
+        firstName
+        lastName
+        address
+        unit
+        field1
+        province
+        postalCode
+        country
+        products
+        subCategory
+        brands
+
+
+Structure of Entier application:
+    Frontend UI (html/css)
+    Backend API (nodejs/express)
+    Database (sqlite)
+
+
+
+
+
+
+Backend discussions: 
+    1. Nodejs for backend.
+    2. Express (library) for nodejs backend api
+    3. Database will be Sqlite
+    4. Database communication will be using SQL Query. 
+    5. Both UI & Backend APIs will run on same server. ( npm start will launch both of them. )
+
+Workflow: 
+    1. After successful user creation, there is no verification of email is needed. 
+
+List of APIs:
+    1. Fetch API the list of products. /products/all
+    2. Fetch API the list of subCategory. /products/category/{product_id}  ( example: /products/category/3 )
+    3. Fetch API the brands of a subCategory. /brands/category/{category_id}/
+    4. Store API the user inputs POST API /register/user
+        product:        specific_product (example: baby or beauty)
+        subCategory:    specific_subCategory (example: hair or nails)
+        brands:         Array of brands (example: [brandId1, brandId2, brandId3 ])
+        user:           Object of { email: 'some@some.com', password: 'sometext', age: 2, termsAggred: boolean } 
+        userAddress:    Object of { firstName: 'asdf', lastName: 'asdf', address: 'asdf', unit: 'asdf', field1: 'asdf', province: 'asdf', postalCode: 'asdf', country: 'asdf' }
+    5. Verfiy email id by sending email with a api link. ( at the time of creation )
+    6. Check email /register/checkemail post data as { emailId: 'asdfasdf' }
+    7. Login API. /login post data { email: 'asdf', password: 'asdf' } 
+    8. Loging with google /auth/google/callback (using passportjs)
+    9. Login with facebook /auth/facebook/callback (using passportjs)
+    10. Verify the token /auth/verify/token POST respond { token: 'JWT Token' } -- discuss 
+        1. it will figure out the new google user or existing google user 
+        2. it will also create an entry on users table once the login from google 
+    11. Get user Info /User/Info ( token in authorization header. )
+    12. logout api to invalidate the session.
+    13. Check email /resetpassword/checkemail post data as { emailId: 'asdfasdf' }
+    14. email link verfication at the time of reseting the password. 
+    15. Reset Password /resetpassword/rest post data { emailId: 'asdfas', password: 'adsfas' }
+
+UI Page:
+    1. Page to show user creation went successful and link to go to dashboard by login. ( page: 15 in pdf and add one more line on top saying your account has been created successfully. )
+    2. Mofidy the login popup to include google and facebook login buttons. (no need logo icon on these buttons)
+        1. login via email/password
+        2. login via google 
+        3. login via facebook
+    3. User Registration flow / email/password page
+        1. if user enters an existing email, while clicking on next button, an error message should appear below email filed saying "this email is taken already, pleaes enter a different email."
+        2. for password field, any number of char is accepted, except left empty. If left empty, we should show "password is required" while clicking next button. 
+        3. for age field, it should start from 18 to 100
+        4. email verification step is not needed. 
+    4. Shipping Address page, will have no validation other than terms aggree checkbox. 
+    5. Login popup
+        1. If email/password was wrong, then show " email / password is incorrect "
+        3. If forget passwod is clicked, then user should be taken to a page where, ***( new UI Page )*** (verify with client)
+            1. email id field and next button. (if the email doesn't exist on backend, we should show some error message saying "email not found" )
+            2. clicking on this next button should show the user with password/retype password form and submit button. 
+            3. clicking submit button, user should be taken back to ui applicaiton with login popup opened. 
+        2. if successful login, then simply hide this popup and show get started page. 
+
+
+All other database:
+1. you need to install database ( for example, download mysql  and install in your laptop )
+2. you need to configure the database to the right credentials and port number
+3. you need to import the data into this database by creating the right db name and table names. 
+4. launch the database. 
+
+Sqlite
+1. installation ( taken care by backend api aplication )
+2. configuration ( taken care by backend api )
+3. import data ( shipped along with backend api source code, no need to manual import, taken care  )
+4. launch ( taken care )
+
+
+
+
+Workflow 1
+===========
+1. select category ( only one category )
+2. showing sub set of the category ( only one )
+3. showing sub set of previous page.
+
+Known Workflows
+==============
+1. Home page -> products category page -> sub category page -> brands selection page -> user details page -> shipping address page. 
+2. Clicking on login link on the header -> Show pop up window with login form. 
+
+
+DataSet:
+========
+
+Beauty
+    Makeup
+        Biotique
+        Colorbar
+        elle18
+        Forest Essentials
+        Himalaya
+        Kama Ayurveda
+        Lakme
+        Lotus
+        Shanaz Hussain
+    Hair
+        Clinic Plus
+        Dove
+        Fiama
+        Habbibs
+        Loreal
+        Streax
+        Sunsilk
+    Nails
+        Biotique
+        Colorbar
+        elle18
+        Forest Essentials
+        Himalaya
+        Kama Ayurveda
+        Lakme
+        Lotus
+        Shanaz Hussain
+    Cremes
+        Biotique
+        Colorbar
+        elle18
+        Forest Essentials
+        Himalaya
+        Kama Ayurveda
+        Lakme
+        Lotus
+        Shanaz Hussain
+    Skin care
+        Ikkai
+        Jucy Chemistry
+        Satvik
+        Tjori
+    Perfumes
+Baby
+    Feeding & Nursing
+    Baby bath & skin
+    Clothing
+    Diapers & Potty
+    Health & Safety
+    Toys
+Cleaning
+    Kitchen & bath
+    Laundry
+    Air Freshners
+    Floor & Glass
+    Storage & Wraps
+    Candles & Scents
+Food
+    Breakfast & Cereal
+    Natual & Organic
+    Snacks 
+    Vitamins & Supplements
+    Protien & Nutritions
+    Drinks & Meal Replacements
+Hygene
+    Bath & Body
+    Oral Care
+    Shaving
+    Sexual Wellness
+    Feminine Care
+    Deodrants & Antisperspirants
+Pets
+    Cats
+    Dogs

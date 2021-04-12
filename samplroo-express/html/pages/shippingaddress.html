@@ -1,0 +1,153 @@
+
+<!DOCTYPE html>
+<html lang="en" class="w-100 h-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"  href="/css/bootstrap.min.css">
+    <link rel="stylesheet"  href="/css/style.css">
+    <title>SampleRoo</title>
+    <script src="/js/includeHtml.js"></script>
+</head>
+<body class="w-100 h-100">
+    <div class="h-100 w-100 d-flex flex-column">
+        <div include-html="/components/header.html"></div>
+        <div class="flex-grow-1 py-4">
+            <div class="w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+                <div class="step1-heading mb-3"><h3>Ship Products to</h3></div>
+                <div class="mb-3" >
+                    <div include-html="/components/stepper.html" total-steps="5" current-step="5"  ></div>
+                </div>
+                <div class="mb-3 w-100">
+                    <div class="container">
+                        <div class="row mx-auto">
+                            <div class="col-12 col-md-6  mx-auto">
+                                <form>
+                                    <div class="form-group mb-3">
+                                      <!-- <label for="exampleFormControlInput1">First Name</label> -->
+                                      <input type="text" class="form-control" id="firstName" placeholder="First Name">
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <!-- <label for="exampleFormControlInput1">Address</label> -->
+                                        <input type="text" class="form-control" id="address" placeholder="Address">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-group mb-3">
+                                                <!-- <label for="exampleFormControlInput1">Address</label> -->
+                                                <input type="text" class="form-control" id="field1" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-group mb-3">
+                                                <!-- <label for="exampleFormControlInput1">Address</label> -->
+                                                <input type="text" class="form-control" id="province" placeholder="Province">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                  </form>
+                            </div>
+                            <div class="col-12 col-md-6  mx-auto">
+                                <form>
+                                    <div class="form-group mb-3">
+                                      <!-- <label for="exampleFormControlInput1">Last Name</label> -->
+                                      <input type="email" class="form-control" id="lastName" placeholder="Last Name">
+                                    </div>
+                                    <div class="form-group mb-3">
+                                        <!-- <label for="exampleFormControlInput1">Unit/Suite</label> -->
+                                        <input type="text" class="form-control" id="unit" placeholder="Unit/Suite">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-group mb-3">
+                                                <!-- <label for="exampleFormControlInput1">Address</label> -->
+                                                <input type="text" class="form-control" id="postalCode" placeholder="Postal Code">
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-group mb-3">
+                                                <!-- <label for="exampleFormControlInput1">Address</label> -->
+                                                <input type="text" class="form-control" id="country" placeholder="Country">
+                                            </div>
+                                        </div>
+                                    </div>
+                                  </form>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="shippingTerms">
+                                    <label class="form-check-label" for="shippingTerms">
+                                      I agree to the terms and conditions of Samplroo and I am of the age of 18 and above
+                                    </label>
+                                    <div id="shippingTermsValidationErr" class="text-danger"></div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div id="shippingButton" class="button-style px-3 py-2 cursor-pointer" onclick="gotoNextpage()" >Next Step</div>
+            </div>
+        </div>
+        <!-- <div include-html="/components/footer.html"></div> -->
+    </div>
+    <script>
+       
+       let creatingUser = false;
+
+        // this is to bring included html into current page. 
+        includeHTML();
+
+        // this is to change the url of the browser to load next page. 
+        function gotoNextpage() {
+
+            if ( creatingUser ) { return }
+
+            let firstName = document.getElementById('firstName').value;
+            let address = document.getElementById('address').value;
+            let field1 = document.getElementById('field1').value;
+            let province = document.getElementById('province').value;
+            let lastName = document.getElementById('lastName').value;
+            let unit = document.getElementById('unit').value;
+            let postalCode = document.getElementById('postalCode').value;
+            let country = document.getElementById('country').value;
+            let shippingTerms = document.getElementById('shippingTerms').checked;
+            let shippingButton = document.getElementById('shippingButton');
+            
+            if ( !shippingTerms ) {
+                    document.getElementById('shippingTermsValidationErr').innerHTML = 'Please agree the terms and condition';
+                    return;
+                    } else {
+                    document.getElementById('shippingTermsValidationErr').innerHTML = '';
+            }
+
+            const shippingObj = { firstName, address, field1, province, lastName, unit, postalCode, country, shippingTerms, shippingButton };
+            const shippingObjStr = JSON.stringify(shippingObj);
+            localStorage.setItem('shippingDetails', shippingObjStr);
+
+
+            const userDetails = JSON.parse(localStorage.getItem('userDetails'));
+            const shippingDetails = JSON.parse(localStorage.getItem('shippingDetails'));
+            const brandId = localStorage.getItem('brandId');
+            const subCategoryId = localStorage.getItem('subCategoryId');
+            const productId = localStorage.getItem('productId');
+            const postObj = {...userDetails, ...shippingDetails, brandId, productId, subCategoryId };
+
+            shippingButton.innerHTML = 'Please Wait...';
+            shippingButton.style.background = 'gainsboro';
+            creatingUser = true;
+            fetch('/register/user', {
+                method: 'POST',
+                headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(postObj)
+            }).then(response => response.json()).then( res => {
+                window.location.href = '/pages/confirmEmail.html';
+            });
+        }
+    </script>
+</body>
+</html>

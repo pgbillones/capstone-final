@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="en" class="w-100 h-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"  href="/css/bootstrap.min.css">
+    <link rel="stylesheet"  href="/css/style.css">
+    <title>SampleRoo</title>
+    <script src="/js/includeHtml.js"></script>
+</head>
+<body class="w-100 h-100">
+    <div class="h-100 w-100 d-flex flex-column">
+        <div include-html="/components/header.html"></div>
+        <div class="flex-grow-1 py-4">
+            <div class="w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+                <div class="step1-heading mb-3"><h3>What Products are you interested sampling?</h3></div>
+                <div class="mb-3" >
+                    <div include-html="/components/stepper.html" total-steps="5" current-step="1"  ></div>
+                </div>
+                <div class="mb-3">
+                    <div id="loadingProducts" class="py-5 text-center">Loading Products...</div>
+                    <div include-html="/components/cards.html" data="productsArr" is-multiple-select="false" on-card-selection="setSelectedProduct" ></div>
+                </div>
+                <div hidden id="productNextButton" class="button-style px-3 py-2 cursor-pointer" onclick="gotoNextpage()" >Next Step</div>
+            </div>
+        </div>
+        <!-- <div include-html="/components/footer.html"></div> -->
+    </div>
+    <script>
+        
+        // this is something hard-coded in UI, later we may need to get this array of data from backend api. 
+        let productsArr;
+        //  = [
+        //     { id: 1, name: 'Beauty', imgUrl: '/images/categories/beauty.png', linkUrl: '/pages/subcategory/beauty.html' },
+        //     { id: 2, name: 'Baby', imgUrl: '/images/categories/baby.png', linkUrl: '/pages/subcategory/baby.html' },
+        //     { id: 3, name: 'Cleaning & Household', imgUrl: '/images/categories/cleaning.png', linkUrl: '/pages/subcategory/cleaning.html' },
+        //     { id: 4, name: 'Hygene', imgUrl: '/images/categories/hygene.png', linkUrl: '/pages/subcategory/hygene.html' },
+        //     { id: 5, name: 'Food & Fitness', imgUrl: '/images/categories/food.png', linkUrl: '/pages/subcategory/food.html' },
+        //     { id: 6, name: 'Pets', imgUrl: '/images/categories/pets.png', linkUrl: '/pages/subcategory/pets.html' }
+        // ];
+
+        let selectedProduct = null;
+
+        // to receive the selected product and store it to selectedProduct variable.
+        function setSelectedProduct(item) {
+            selectedProduct = item;
+        }
+
+        // this is to make backend api call
+        fetch('/products/all').then(response => response.json()).then( res => {
+            productsArr = res.map( (item, index) => { item.resId = item.id; item.id = index + 1; return item; }); 
+            // to hide the loadingProducts text once data has been received. 
+            document.getElementById('loadingProducts').hidden = true;
+            // this is to bring included html into current page. 
+            includeHTML();
+            // this is to show the next button after data redered in UI. 
+            document.getElementById('productNextButton').hidden = false;
+        });
+
+        // this is to change the url of the browser to load next page. 
+        function gotoNextpage() {
+            localStorage.setItem('productId', selectedProduct.resId);
+            window.location.href = '/pages/subCategory.html?productId=' + selectedProduct.resId;
+        }
+    </script>
+</body>
+</html>

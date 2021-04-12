@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" class="w-100 h-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"  href="/css/bootstrap.min.css">
+    <link rel="stylesheet"  href="/css/style.css">
+    <title>SampleRoo</title>
+    <script src="/js/includeHtml.js"></script>
+</head>
+<body class="w-100 h-100">
+    <div class="h-100 w-100 d-flex flex-column">
+        <div include-html="/components/header.html"></div>
+        <div class="flex-grow-1 py-4">
+            <div class="w-100 h-100 d-flex flex-column justify-content-center align-items-center">
+                <div class="step1-heading mb-3"><h3>Tell us a little more</h3></div>
+                <div class="mb-3" >
+                    <div include-html="/components/stepper.html" total-steps="5" current-step="2"  ></div>
+                </div>
+                <div class="mb-3">
+                    <div include-html="/components/cards.html" data="productsArr" is-multiple-select="false" on-card-selection="setSelectedProduct" ></div>
+                </div>
+                <div class="button-style px-3 py-2 cursor-pointer" onclick="gotoNextpage()" >Next Step</div>
+            </div>
+        </div>
+        <!-- <div include-html="/components/footer.html"></div> -->
+    </div>
+    <script>
+        // this is something hard-coded in UI, later we may need to get this array of data from backend api. 
+        let productsArr = [
+            { id: 1, name: 'Kitchen & Bath', imgUrl: '/images/categories/cleaning/kitchen.png', linkUrl: '/pages/subcategory/brands/allbrands.html' },
+            { id: 2, name: 'Laundry', imgUrl: '/images/categories/cleaning/laundry.png', linkUrl: '/pages/subcategory/brands/allbrands.html' },
+            { id: 3, name: 'Air Freshners', imgUrl: '/images/categories/cleaning/airfreshner.png', linkUrl: '/pages/subcategory/brands/allbrands.html' },
+            { id: 4, name: 'Floor & Glass', imgUrl: '/images/categories/cleaning/floor.png', linkUrl: '/pages/subcategory/brands/allbrands.html' },
+            { id: 5, name: 'Storage & Wraps', imgUrl: '/images/categories/cleaning/storage.png', linkUrl: '/pages/subcategory/brands/allbrands.html' },
+            { id: 6, name: 'Candles & Scents', imgUrl: '/images/categories/cleaning/scent.png', linkUrl: '/pages/subcategory/brands/allbrands.html' }
+        ];
+
+        let selectedProduct = null;
+
+        // to receive the selected product and store it to selectedProduct variable.
+        function setSelectedProduct(item) {
+            selectedProduct = item;
+        }
+
+        // this is to bring included html into current page. 
+        includeHTML();
+
+        // this is to change the url of the browser to load next page. 
+        function gotoNextpage() {
+            window.location.href = selectedProduct.linkUrl;
+        }
+    </script>
+</body>
+</html>
